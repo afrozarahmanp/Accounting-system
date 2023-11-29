@@ -20,7 +20,8 @@ import { FaRegWindowRestore, FaSignOutAlt } from "react-icons/fa";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import { FaArrowsAlt } from "react-icons/fa";
-import {  Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from "react-router-dom";
+import Footer from "../Footer/Footer";
 
 const drawerWidth = 240;
 
@@ -114,7 +115,27 @@ const Navbar = () => {
     <div>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBar position="fixed" open={open} sx={{ backgroundColor: "white" }}>
+        <AppBar
+          position="fixed"
+          open={open}
+          sx={{
+            backgroundImage: "linear-gradient(to right, #D7BDE2, #85C1E9)",
+            // Adjust the gradient colors as needed
+            zIndex: theme.zIndex.drawer + 1,
+            transition: theme.transitions.create(["width", "margin"], {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
+            ...(open && {
+              marginLeft: drawerWidth,
+              width: `calc(100% - ${drawerWidth}px)`,
+              transition: theme.transitions.create(["width", "margin"], {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+            }),
+          }}
+        >
           <Toolbar className="flex justify-between">
             <div>
               <IconButton
@@ -128,28 +149,32 @@ const Navbar = () => {
               </IconButton>
             </div>
             <div>
+              
               <Typography
                 variant=""
                 noWrap
                 component="div"
                 className="text-left"
               >
-                <div className="navbar-end text-black ">
+                <div className="navbar-end text-black">
                   <button className="btn btn-ghost ">
-                    <h2>Accounts</h2>
+                    <Link to='/'><h2 className="text-base">Home</h2></Link>
                   </button>
                   <button className="btn btn-ghost ">
-                    <div className="indicator">
-                      <FaSignOutAlt />
+                    <h2 className="text-base">Accounts</h2>
+                  </button>
+                  <button className="btn btn-ghost ">
+                    <div className="indicator flex items-center">
+                      <FaSignOutAlt className="text-base" />
                       <span className="ml-2">
-                        <h2>Logout</h2>
+                        <h2 className="text-base">Logout</h2>
                       </span>
                     </div>
                   </button>
                   <button className="btn btn-ghost ">
-                    <div className="indicator">
-                      <FaRegWindowRestore />
-                      <span className="ml-2"> Modules</span>
+                    <div className="indicator flex items-center">
+                      <FaRegWindowRestore className="text-base"/>
+                      <span className="ml-2 text-base"> Modules</span>
                     </div>
                   </button>
                 </div>
@@ -159,6 +184,20 @@ const Navbar = () => {
         </AppBar>
         <Drawer variant="permanent" open={open}>
           <DrawerHeader>
+            {open && (
+              <div className="flex flex-col m-2">
+                <div className="avatar mx-auto m-4">
+                  <div className="w-16 rounded-full ">
+                    <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                  </div>
+                </div>
+                <div>
+                  <div className="">
+                    <h2>OMNI Solutions</h2>
+                  </div>
+                </div>
+              </div>
+            )}
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === "rtl" ? (
                 <ChevronRightIcon />
@@ -169,55 +208,7 @@ const Navbar = () => {
           </DrawerHeader>
           <Divider />
 
-
-
-
-
-
           <List>
-        {["Settings"].map((text, index) => (
-          <ListItem key={text} disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-              onClick={handleSettingsClick}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
-                }}
-              >
-                {index % 2 === 0 ? <FaArrowsAlt /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-        {showGroupButton && (
-          <ListItem disablePadding sx={{ display: "block" }}>
-          <ListItemButton
-            component={Link}
-            to="/groupEntry"
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? "initial" : "center",
-              px: 2.5,
-            }}
-          >
-            {/* No icon before the "Group" button */}
-            <ListItemText primary="Group" sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
-        </ListItem>
-        )}
-      </List>
-
-
-          {/* <List>
             {["Settings"].map((text, index) => (
               <ListItem key={text} disablePadding sx={{ display: "block" }}>
                 <ListItemButton
@@ -226,6 +217,7 @@ const Navbar = () => {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                   }}
+                  onClick={handleSettingsClick}
                 >
                   <ListItemIcon
                     sx={{
@@ -240,25 +232,36 @@ const Navbar = () => {
                 </ListItemButton>
               </ListItem>
             ))}
-          </List> */}
-
-
-
-
-
-
-
-
-
+            {showGroupButton && (
+              <ListItem disablePadding sx={{ display: "block" }}>
+                <ListItemButton
+                  component={Link}
+                  to="/groupEntry"
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  {/* No icon before the "Group" button */}
+                  <ListItemText
+                    primary="Group"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            )}
+          </List>
 
           <Divider />
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
-          
+
           <Typography paragraph>
-          {location.pathname === '/' && <p>Accounting System</p>}
-          <Outlet></Outlet>
+            {location.pathname === "/" && <img className="w-full" src='https://i.ibb.co/f9Z7r4k/Whats-App-Image-2023-11-29-at-23-00-37-52e90bdd.jpg'/>}
+            <Outlet></Outlet>
+            <Footer></Footer>
           </Typography>
         </Box>
       </Box>

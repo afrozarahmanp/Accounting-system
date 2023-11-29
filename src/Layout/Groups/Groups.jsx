@@ -55,7 +55,12 @@ const Groups = () => {
   };
 
   const handleDeleteOption = () => {
-    if (selectedGroup || selectedSubgroup || selectedOption || selectedAdditionalOption) {
+    if (
+      selectedGroup ||
+      selectedSubgroup ||
+      selectedOption ||
+      selectedAdditionalOption
+    ) {
       // Check if any selection is made before proceeding with the deletion
       setIsModalOpen(true);
       setIsDeleting(true); // Set to true when deleting an option
@@ -71,20 +76,26 @@ const Groups = () => {
   const handleModalSubmit = () => {
     if (isDeleting) {
       // Handle the deletion logic here (remove the selected option from the lists)
-      const updatedCustomOptions = customOptions.filter(option => option !== modalInput);
-      const updatedOptionList = optionList.filter(option => option !== modalInput);
-      const updatedAdditionalOptionList = additionalOptionList.filter(option => option !== modalInput);
-  
+      const updatedCustomOptions = customOptions.filter(
+        (option) => option !== modalInput
+      );
+      const updatedOptionList = optionList.filter(
+        (option) => option !== modalInput
+      );
+      const updatedAdditionalOptionList = additionalOptionList.filter(
+        (option) => option !== modalInput
+      );
+
       setCustomOptions(updatedCustomOptions);
       setOptionList(updatedOptionList);
       setAdditionalOptionList(updatedAdditionalOptionList);
-  
+
       console.log("Deleting option:", modalInput);
     } else {
       // Handle the addition logic here
       if (modalInput) {
         setCustomOptions([...customOptions, modalInput]);
-  
+
         if (selectedSubgroup && selectedSubgroup !== "Custom") {
           if (!selectedOption) {
             setOptionList([...optionList, modalInput]);
@@ -94,18 +105,19 @@ const Groups = () => {
         } else if (selectedOption) {
           setAdditionalOptionList([...additionalOptionList, modalInput]);
         } else {
-          console.error("Cannot add an option without selecting the previous option.");
+          console.error(
+            "Cannot add an option without selecting the previous option."
+          );
         }
-  
+
         console.log(`Details for ${modalInput}: ${details}`);
       }
     }
-  
+
     setIsModalOpen(false);
     setModalInput("");
     setDetails(""); // Clear details after submitting
   };
-  
 
   const handleClearForm = () => {
     setSelectedGroup("");
@@ -165,7 +177,9 @@ const Groups = () => {
 
           <div className="mt-4 flex items-center justify-end">
             <button
-              className={`px-4 py-2 text-white ${isDeleting ? "bg-red-500" : "bg-green-500"} rounded-md mr-2`}
+              className={`px-4 py-2 text-white ${
+                isDeleting ? "bg-red-500" : "bg-green-500"
+              } rounded-md mr-2`}
               onClick={handleModalSubmit}
             >
               {isDeleting ? "Confirm Deletion" : "Submit"}
@@ -291,8 +305,12 @@ const Groups = () => {
 
       <div className="mb-4 flex items-center justify-end">
         <button
-          className="px-4 py-2 text-white bg-blue-500 rounded-md"
+          className="px-4 py-2 text-Black bg-blue-500 rounded-md"
           onClick={handleClearForm}
+          style={{
+            backgroundImage: "linear-gradient(to right, #77a1d9, #85C1E9)",
+            // Adjust the gradient colors as needed
+          }}
         >
           Clear Form
         </button>
