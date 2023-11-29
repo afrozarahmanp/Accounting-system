@@ -14,7 +14,7 @@ const Groups = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalInput, setModalInput] = useState("");
   const [details, setDetails] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false); 
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const groups = ["Asset", "Equity", "Expenditure", "Income", "Liability"];
 
@@ -71,27 +71,41 @@ const Groups = () => {
   const handleModalSubmit = () => {
     if (isDeleting) {
       // Handle the deletion logic here (remove the selected option from the lists)
+      const updatedCustomOptions = customOptions.filter(option => option !== modalInput);
+      const updatedOptionList = optionList.filter(option => option !== modalInput);
+      const updatedAdditionalOptionList = additionalOptionList.filter(option => option !== modalInput);
+  
+      setCustomOptions(updatedCustomOptions);
+      setOptionList(updatedOptionList);
+      setAdditionalOptionList(updatedAdditionalOptionList);
+  
       console.log("Deleting option:", modalInput);
     } else {
-      // Handle the addition logic here (similar to your existing code)
+      // Handle the addition logic here
       if (modalInput) {
         setCustomOptions([...customOptions, modalInput]);
-
-        if (optionList.length === 0) {
-          setOptionList([...optionList, modalInput]);
-        } else {
+  
+        if (selectedSubgroup && selectedSubgroup !== "Custom") {
+          if (!selectedOption) {
+            setOptionList([...optionList, modalInput]);
+          } else {
+            setAdditionalOptionList([...additionalOptionList, modalInput]);
+          }
+        } else if (selectedOption) {
           setAdditionalOptionList([...additionalOptionList, modalInput]);
+        } else {
+          console.error("Cannot add an option without selecting the previous option.");
         }
-
+  
         console.log(`Details for ${modalInput}: ${details}`);
       }
     }
-
+  
     setIsModalOpen(false);
     setModalInput("");
     setDetails(""); // Clear details after submitting
   };
-
+  
 
   const handleClearForm = () => {
     setSelectedGroup("");
