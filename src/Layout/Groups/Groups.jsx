@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
@@ -19,12 +19,97 @@ const Groups = () => {
   const [details, setDetails] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const [groupList, setGroupList] = useState(["Asset", "Equity", "Expenditure", "Income", "Liability"])
+  const [subgroupList, setSubgroupList] = useState(["Fixed Asset", "Current Asset"])
+
   const groups = ["Asset", "Equity", "Expenditure", "Income", "Liability"];
 
   const subgroups = {
     Asset: ["Fixed Asset", "Current Asset"],
     // Add subgroups for other groups as needed
   };
+
+
+
+  useEffect(() => {
+    // Load data from localStorage on component mount
+    const storedGroupList = JSON.parse(localStorage.getItem('groupList')) || ['Asset', 'Equity', 'Expenditure', 'Income', 'Liability'];
+    const storedSubgroupList = JSON.parse(localStorage.getItem('subgroupList')) || ['Fixed Asset', 'Current Asset', 'Intangible Asset'];
+    const storedOptionList = JSON.parse(localStorage.getItem('optionList')) || [];
+    const storedAdditionalOptionList = JSON.parse(localStorage.getItem('additionalOptionList')) || [];
+
+    setGroupList(storedGroupList);
+    setSubgroupList(storedSubgroupList);
+    setOptionList(storedOptionList);
+    setAdditionalOptionList(storedAdditionalOptionList);
+  }, []);
+
+//   useEffect(() => {
+//     // Check if there is data in local storage
+//     const storedFormData = localStorage.getItem('formData');
+
+//     if (storedFormData) {
+//       // Parse the stored JSON string to an object
+//       const formData = JSON.parse(storedFormData);
+
+//       // Set the form fields with the retrieved data
+//       setSelectedGroup(formData.selectedGroup || '');
+//       setSelectedSubgroup(formData.selectedSubgroup || '');
+//       setSelectedOption(formData.selectedOption || '');
+//       setSelectedAdditionalOption(formData.selectedAdditionalOption || '');
+//       setCustomOptions(formData.customOptions || []);
+//       setOptionList(formData.optionList || []);
+//       setAdditionalOptionList(formData.additionalOptionList || []);
+//     }
+//   }, []); 
+  const saveToLocalStorage = () => {
+    // Save data to localStorage
+    localStorage.setItem('groupList', JSON.stringify(groupList));
+    localStorage.setItem('subgroupList', JSON.stringify(subgroupList));
+    localStorage.setItem('optionList', JSON.stringify(optionList));
+    localStorage.setItem('additionalOptionList', JSON.stringify(additionalOptionList));
+
+
+    setSelectedGroup("");
+    setSelectedSubgroup("");
+    setSelectedOption("");
+    setSelectedAdditionalOption("");
+    setCustomOptions([]);
+    setModalInput("");
+    setDetails("");
+
+    Swal.fire({
+        title: 'Stored in Local Storage!',
+        text: 'Form data has been added to local storage.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+    //   handleClearForm();
+  };
+
+//   const handleAddToLocalStorage = () => {
+//     const formData = {
+//       selectedGroup,
+//       selectedSubgroup,
+//       selectedOption,
+//       selectedAdditionalOption,
+//       customOptions,
+//       optionList,
+//       additionalOptionList,
+//     };
+
+//     // Convert the form data to a JSON string and store it in local storage
+//     localStorage.setItem('formData', JSON.stringify(formData));
+
+//     // Show SweetAlert popup after storing in local storage
+//     Swal.fire({
+//       title: 'Stored in Local Storage!',
+//       text: 'Form data has been added to local storage.',
+//       icon: 'success',
+//       confirmButtonText: 'OK',
+//     });
+//     handleClearForm();
+//   };
 
   const handleGroupChange = (e) => {
     const selectedGroup = e.target.value;
@@ -161,6 +246,8 @@ const Groups = () => {
     });
   };
 
+
+
   return (
     <div className="m-4">
       <div className="mb-4">
@@ -173,7 +260,7 @@ const Groups = () => {
           onChange={handleGroupChange}
         >
           <option value="">Select a group</option>
-          {groups.map((group) => (
+          {groupList.map((group) => (
             <option key={group} value={group}>
               {group}
             </option>
@@ -249,7 +336,7 @@ const Groups = () => {
               onChange={handleSubgroupChange}
             >
               <option value="">Select an option</option>
-              {subgroups[selectedGroup].map((subgroup) => (
+              {subgroupList.map((subgroup) => (
                 <option key={subgroup} value={subgroup}>
                   {subgroup}
                 </option>
@@ -348,6 +435,16 @@ const Groups = () => {
       )}
 
       <div className="mb-4 flex items-center justify-end">
+      <button
+          className="px-4 py-2 text-white bg-blue-500 rounded-md mr-2"
+          onClick={saveToLocalStorage}
+          style={{
+            backgroundImage: "linear-gradient(to right,  #3481ed, #6499e3)",
+            // Adjust the gradient colors as needed
+          }}
+        >
+          Add Data
+        </button>
         <button
           className="px-4 py-2 text-white bg-blue-500 rounded-md"
           onClick={handleClearForm}
