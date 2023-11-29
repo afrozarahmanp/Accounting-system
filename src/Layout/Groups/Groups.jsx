@@ -2,6 +2,9 @@ import { useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
+import Swal from 'sweetalert2';
+import 'sweetalert2/src/sweetalert2.scss';
+import { FaRegEdit } from "react-icons/fa";
 
 const Groups = () => {
   const [selectedGroup, setSelectedGroup] = useState("");
@@ -72,8 +75,13 @@ const Groups = () => {
       console.log("No option selected for deletion");
     }
   };
+ 
 
   const handleModalSubmit = () => {
+    if (!modalInput || (isDeleting && !details && details !== "")) {
+      alert("Please fill in all required fields.");
+      return;
+    }
     if (isDeleting) {
       // Handle the deletion logic here (remove the selected option from the lists)
       const updatedCustomOptions = customOptions.filter(
@@ -90,29 +98,45 @@ const Groups = () => {
       setOptionList(updatedOptionList);
       setAdditionalOptionList(updatedAdditionalOptionList);
 
+      // Show SweetAlert popup after deletion
+      Swal.fire({
+        title: "Deleted!",
+        text: `Option ${modalInput} has been deleted.`,
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
       console.log("Deleting option:", modalInput);
     } else {
-      // Handle the addition logic here
-      if (modalInput) {
-        setCustomOptions([...customOptions, modalInput]);
-
-        if (selectedSubgroup && selectedSubgroup !== "Custom") {
-          if (!selectedOption) {
-            setOptionList([...optionList, modalInput]);
-          } else {
+        // Handle the addition logic here
+        if (modalInput) {
+          setCustomOptions([...customOptions, modalInput]);
+    
+          if (selectedSubgroup && selectedSubgroup !== "Custom") {
+            if (!selectedOption) {
+              setOptionList([...optionList, modalInput]);
+            } else {
+              setAdditionalOptionList([...additionalOptionList, modalInput]);
+            }
+          } else if (selectedOption) {
             setAdditionalOptionList([...additionalOptionList, modalInput]);
+          } else {
+            console.error(
+              "Cannot add an option without selecting the previous option."
+            );
           }
-        } else if (selectedOption) {
-          setAdditionalOptionList([...additionalOptionList, modalInput]);
-        } else {
-          console.error(
-            "Cannot add an option without selecting the previous option."
-          );
+    
+          // Show SweetAlert popup after addition
+          Swal.fire({
+            title: 'Added!',
+            text: `Option ${modalInput} has been added.`,
+            icon: 'success',
+            confirmButtonText: 'OK',
+          });
+    
+          console.log(`Details for ${modalInput}: ${details}`);
         }
-
-        console.log(`Details for ${modalInput}: ${details}`);
       }
-    }
 
     setIsModalOpen(false);
     setModalInput("");
@@ -127,6 +151,14 @@ const Groups = () => {
     setCustomOptions([]);
     setOptionList([]);
     setAdditionalOptionList([]);
+
+    // Show SweetAlert popup after clearing the form
+    Swal.fire({
+      title: 'Cleared!',
+      text: 'The form has been cleared.',
+      icon: 'success',
+      confirmButtonText: 'OK',
+    });
   };
 
   return (
@@ -148,29 +180,41 @@ const Groups = () => {
           ))}
         </select>
       </div>
-      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)} center>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        center
+        styles={{
+            modal: {
+              width: "75%", // Adjust the width as needed
+              height: "auto", // Auto-adjust the height based on content
+            },
+          }} // Pass the styles to the Modal component
+      >
         <div className="p-4">
           <label className="block text-sm font-medium text-gray-700">
-            {isDeleting ? "Delete Option" : "Enter a new option:"}
+            {isDeleting ? "Delete Option" : <div className="flex items-center"><FaRegEdit className="mr-2" />Write Account Group Name:</div>}
           </label>
           <input
             type="text"
             className="mt-1 p-2 border rounded-md w-full"
             value={modalInput}
             onChange={(e) => setModalInput(e.target.value)}
+            required // Make the field required
           />
 
           {/* Conditionally render details input only when adding an option */}
           {!isDeleting && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mt-4">
-                Option Details:
+              <div className="flex items-center" ><FaRegEdit className=''/> <span className="ml-2">Write Description:</span></div>
               </label>
               <input
                 type="text"
                 className="mt-1 p-2 border rounded-md w-full"
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
+                required // Make the field required
               />
             </div>
           )}
@@ -178,7 +222,7 @@ const Groups = () => {
           <div className="mt-4 flex items-center justify-end">
             <button
               className={`px-4 py-2 text-white ${
-                isDeleting ? "bg-red-500" : "bg-green-500"
+                isDeleting ? "bg-red-500" : "bg-blue-500"
               } rounded-md mr-2`}
               onClick={handleModalSubmit}
             >
@@ -204,7 +248,7 @@ const Groups = () => {
               value={selectedSubgroup}
               onChange={handleSubgroupChange}
             >
-              <option value="">Select a subgroup</option>
+              <option value="">Select an option</option>
               {subgroups[selectedGroup].map((subgroup) => (
                 <option key={subgroup} value={subgroup}>
                   {subgroup}
@@ -213,7 +257,7 @@ const Groups = () => {
             </select>
             {selectedSubgroup && (
               <FaPlus
-                className="ml-2 cursor-pointer text-green-500"
+                className="ml-2 cursor-pointer text-blue-500"
                 onClick={() => handleAddOption(1)}
               />
             )}
@@ -230,7 +274,7 @@ const Groups = () => {
       {selectedSubgroup && (
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Select Option:
+            Select Subgroup:
           </label>
           <div className="flex items-center">
             <div className="flex-grow">
@@ -249,7 +293,7 @@ const Groups = () => {
             </div>
             <div className="ml-2">
               <button
-                className="cursor-pointer text-green-500 rounded-md"
+                className="cursor-pointer text-blue-500 rounded-md"
                 onClick={() => handleAddOption(0)} // Pass index 0 for "Select Option"
               >
                 <FaPlus></FaPlus>
@@ -268,7 +312,7 @@ const Groups = () => {
       {selectedOption && (
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Select Additional Option:
+            Select Subgroup:
           </label>
           <div className="flex items-center">
             <div className="flex-grow">
@@ -277,7 +321,7 @@ const Groups = () => {
                 value={selectedAdditionalOption}
                 onChange={handleAdditionalOptionChange}
               >
-                <option value="">Select an additional option</option>
+                <option value="">Select an option</option>
                 {additionalOptionList.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -287,7 +331,7 @@ const Groups = () => {
             </div>
             <div className="ml-2">
               <button
-                className=" cursor-pointer text-green-500 rounded-md"
+                className=" cursor-pointer text-blue-500 rounded-md"
                 onClick={() => handleAddOption(1)} // Pass index 1 for "Select Additional Option"
               >
                 <FaPlus></FaPlus>
@@ -305,10 +349,10 @@ const Groups = () => {
 
       <div className="mb-4 flex items-center justify-end">
         <button
-          className="px-4 py-2 text-Black bg-blue-500 rounded-md"
+          className="px-4 py-2 text-white bg-blue-500 rounded-md"
           onClick={handleClearForm}
           style={{
-            backgroundImage: "linear-gradient(to right, #77a1d9, #85C1E9)",
+            backgroundImage: "linear-gradient(to right,  #3481ed, #6499e3)",
             // Adjust the gradient colors as needed
           }}
         >

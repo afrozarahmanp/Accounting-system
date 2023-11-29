@@ -259,7 +259,7 @@ const Navbar = () => {
           <DrawerHeader />
 
           <Typography paragraph>
-            {location.pathname === "/" && <img className="w-full" src='https://i.ibb.co/f9Z7r4k/Whats-App-Image-2023-11-29-at-23-00-37-52e90bdd.jpg'/>}
+            {location.pathname === "/" && <img className="w-full  m-auto" src='https://i.ibb.co/f9Z7r4k/Whats-App-Image-2023-11-29-at-23-00-37-52e90bdd.jpg'/>}
             <Outlet></Outlet>
             <Footer></Footer>
           </Typography>
